@@ -30,7 +30,7 @@ public class GetNews implements Callable<ArrayList<String>>{
             JSONArray newsObjects = reader.getJSONArray("value");
             for (int i = 0; i<newsObjects.length(); i++) {
                 JSONObject v = newsObjects.getJSONObject(i);
-                values.add(v.getString("description"));
+                values.add(v.getString("name"));
             }
         } catch (Exception e) {
             values.add(e.toString());
