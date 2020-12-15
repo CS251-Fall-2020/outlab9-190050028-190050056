@@ -11,12 +11,19 @@ import java.util.ArrayList;
 import java.util.concurrent.Callable;
 
 public class GetNews implements Callable<ArrayList<String>>{
+
+    private ArrayList<String> newsArray;
+
+    public GetNews(ArrayList<String> arr) {
+        newsArray = arr;
+    }
+
     public ArrayList<String> call() {
         String news;
-        ArrayList<String> values = new ArrayList<String>();
         OkHttpClient client = new OkHttpClient();
+        int offset = newsArray.size();
         Request request = new Request.Builder()
-                .url("https://bing-news-search1.p.rapidapi.com/news?safeSearch=Off&textFormat=Raw")
+                .url("https://bing-news-search1.p.rapidapi.com/news?count=15&offset=" + offset + "&mkt=en-IN&safeSearch=Off&category=World&textFormat=Raw")
                 .get()
                 .addHeader("x-bingapis-sdk", "true")
                 .addHeader("x-rapidapi-key", "3f3723aa27mshb763be6f66a7c88p1b4bedjsn1a77cf33295a")
@@ -26,15 +33,14 @@ public class GetNews implements Callable<ArrayList<String>>{
             Response response = client.newCall(request).execute();
             news = response.body().string();
             JSONObject reader = new JSONObject(news);
-            ArrayList<String> headlineList = new ArrayList<String>();
             JSONArray newsObjects = reader.getJSONArray("value");
             for (int i = 0; i<newsObjects.length(); i++) {
                 JSONObject v = newsObjects.getJSONObject(i);
-                values.add(v.getString("name"));
+                newsArray.add(v.getString("name"));
             }
         } catch (Exception e) {
-            values.add(e.toString());
+            newsArray.add(e.toString());
         }
-        return values;
+        return newsArray;
     }
 }
